@@ -1,36 +1,100 @@
 import flet as ft
 
 def main(page: ft.Page):
-    page.title = "Monto final"
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    texto = ft.Text("de ingresar el monto a pagar")
+    page.title = "Registro de Eventos"
+    page.padding = 20
 
-    resultado = ft.Text("Tu propina es de 0")
-    resultado2 = ft.Text("Tu monto a pagar es de 0")
 
-    def calcular(e):
-        try:
-            monto = float(CanIn.value)
-        except:
-            monto=0
-        porcentaje = Cal.value
-        propina = monto * porcentaje
-        Mon = monto + propina
-        resultado.value = f"Tu propina es de {propina}"
-        resultado2.value = f"Tu Monto a final a pagarr es de {Mon}"
+    titulo = ft.Text(
+        value="Registro de eventos",
+        size=28,
+        weight=ft.FontWeight.BOLD
+    )
+
+    nombreEve = ft.TextField(
+        label="Nombre del evento",
+        hint_text="Escribe el nombre de tu evento"
+    )
+
+    tipoEven = ft.Dropdown(
+        label="Tipo de evento",
+        options=[
+            ft.dropdown.Option("Conferencia"),
+            ft.dropdown.Option("Taller"),
+            ft.dropdown.Option("Reunion"),
+        ],
+        value="Conferencia",
+        width=300
+    )
+
+    modalidad = ft.RadioGroup(
+        content=ft.Row([
+            ft.Radio(value="Presencial", label="Presencial"),
+            ft.Radio(value="Virtual", label="Virtual"),
+        ]),
+        value="Presencial"  )
+
+    inscripcion = ft.Checkbox(
+        label="Necesita inscripcion previa?",
+        value=False)
+
+    duracion = ft.Slider(
+        min=1,
+        max=8,
+        divisions=7,
+        label="{value} horas",
+        value=1 )
+
+    resumen = ft.Text(
+        value="",
+        size=16,
+        weight=ft.FontWeight.W_500,
+        color=ft.Colors.BLUE )
+    
+    def mostrar_resumen(e):
+        nombre = nombreEve.value
+        tipo = tipoEven.value
+        mod = modalidad.value
+        insc = inscripcion.value
+        horas = duracion.value
+        
+        if insc==True:
+            insc="Necesita Incripcion"
+        else:
+            insc="No necesita Inscripcion"
+        
+
+        resumen.value = "El nombre del evento es: " + nombre
+        resumen.value += "\nEs de tipo " + str(tipo)
+        resumen.value += "\nLa modalidad es " + str(mod)
+        resumen.value += "\nEste evento " + str(insc)
+        resumen.value += "\nEl evento dura un total de " + str(horas) + "horas"
+        resumen.color = ft.Colors.BLACK
         page.update()    
-    CanIn = ft.TextField(value="0", width=100, on_change=calcular)
-    Cal = ft.Slider( min=0.05, max=0.45, divisions=8,value=0.05, on_change=calcular )
-
+        
+        
+    boton = ft.Button(
+        content=ft.Text("Mostrar resumen"),
+        on_click=mostrar_resumen,
+        bgcolor=ft.Colors.GREY,
+        color=ft.Colors.WHITE
+    )    
+    
     page.add(
-        ft.Column([
-                ft.Row([texto, CanIn], alignment=ft.MainAxisAlignment.CENTER),
-                Cal,
-                resultado,
-                resultado2
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        ))
+        ft.Column(
+            [
+                titulo,
+                nombreEve,
+                tipoEven,
+                modalidad,
+                inscripcion,
+                duracion,
+                boton,
+                ft.Divider(),
+                resumen
+            ],spacing=18
+
+        )
+    )
 
 ft.app(target=main)
