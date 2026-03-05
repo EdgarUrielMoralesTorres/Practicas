@@ -12,7 +12,6 @@ def main(page: ft.Page):
 
     nombreEve = ft.TextField(
         label="Nombre del evento",
-        value="",
         hint_text="Escribe el nombre de tu evento"
     )
 
@@ -48,11 +47,30 @@ def main(page: ft.Page):
         value=1
     )
 
+    fecha_evento = ft.Text("Fecha no seleccionada")
+
+    def selFech(e):
+        if tiem.value:
+            fecha_evento.value = "Fecha seleccionada: " + tiem.value.strftime("%d/%m/%Y")
+            page.update()
+
+    tiem = ft.DatePicker(on_change=selFech)
+
+    page.overlay.append(tiem)
+
+    def abriFech(e):
+        tiem.open = True
+        page.update()
+
+    boton_fecha = ft.Button(
+        content=ft.Text("Seleccionar fecha"),
+        on_click=abriFech
+    )
+
     resumen = ft.Text(
         value="",
         size=16,
-        weight=ft.FontWeight.W_500,
-        color=ft.Colors.BLUE
+        weight=ft.FontWeight.W_500
     )
 
     def mostrar_resumen(e):
@@ -69,24 +87,24 @@ def main(page: ft.Page):
         insc = inscripcion.value
         horas = duracion.value
 
-        if insc == True:
-            insc = "Necesita Inscripcion"
+        if insc:
+            texto_insc = "Necesita inscripción"
         else:
-            insc = "No necesita Inscripcion"
+            texto_insc = "No necesita inscripción"
 
         resumen.value = "El nombre del evento es: " + nombre
         resumen.value += "\nEs de tipo " + tipo
         resumen.value += "\nLa modalidad es " + mod
-        resumen.value += "\nEste evento " + insc
-        resumen.value += "\nEl evento dura un total de " + str(horas) + " horas"
+        resumen.value += "\nEste evento " + texto_insc
+        resumen.value += "\nEl evento dura " + str(horas) + " horas"
+        resumen.value += "\n" + fecha_evento.value
+
         resumen.color = ft.Colors.BLACK
         page.update()
 
     boton = ft.Button(
         content=ft.Text("Mostrar resumen"),
-        on_click=mostrar_resumen,
-        bgcolor=ft.Colors.GREY,
-        color=ft.Colors.BLACK
+        on_click=mostrar_resumen
     )
 
     page.add(
@@ -98,6 +116,8 @@ def main(page: ft.Page):
                 modalidad,
                 inscripcion,
                 duracion,
+                boton_fecha,
+                fecha_evento,
                 boton,
                 ft.Divider(),
                 resumen
@@ -106,4 +126,4 @@ def main(page: ft.Page):
         )
     )
 
-ft.app(target=main)
+ft.run(main)
